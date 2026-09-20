@@ -884,30 +884,8 @@ const server =
 
             setCorsHeaders(res);
 
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204);
-    return res.end();
-  }
-
-
-            if (
-                req.method === 'OPTIONS'
-            ) {
-
-                res.writeHead(
-                    204,
-                    {
-                        'Access-Control-Allow-Origin':
-                            '*',
-
-                        'Access-Control-Allow-Headers':
-                            'Content-Type, Authorization, X-Admin-Token',
-
-                        'Access-Control-Allow-Methods':
-                            'GET,POST,PATCH,DELETE,OPTIONS'
-                    }
-                );
-
+            if (req.method === 'OPTIONS') {
+                res.writeHead(204);
                 return res.end();
             }
 
@@ -2442,12 +2420,28 @@ const server =
                     '/control'
             ) {
 
+                const controlPanelPath =
+                    path.join(
+                        __dirname,
+                        'control-panel.html'
+                    );
+
+                if (!fs.existsSync(controlPanelPath)) {
+                    return json(
+                        res,
+                        500,
+                        {
+                            error:
+                                'CONTROL_PANEL_NOT_FOUND',
+                            message:
+                                'control-panel.html is missing beside Server.js'
+                        }
+                    );
+                }
+
                 const html =
                     fs.readFileSync(
-                        path.join(
-                            __dirname,
-                            'control-panel.html'
-                        ),
+                        controlPanelPath,
                         'utf8'
                     );
 
