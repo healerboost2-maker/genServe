@@ -8,6 +8,7 @@ const dotenv = require('dotenv');
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const PORT = Number(process.env.PORT || 10000);
+const CONTROL_PANEL_ORIGIN = process.env.CONTROL_PANEL_ORIGIN || '*';
 const SERVER_NAME = 'AudioBridge';
 const SERVER_VERSION = '4.1.0';
 
@@ -856,8 +857,22 @@ function applyRouteState(
 // ============================================================
 
 const server =
+function setCorsHeaders(res) {
+  res.setHeader('Access-Control-Allow-Origin', CONTROL_PANEL_ORIGIN);
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Admin-Token');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
+  res.setHeader('Access-Control-Max-Age', '86400');
+}
+
     http.createServer(
         async (req, res) => {
+  setCorsHeaders(res);
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    return res.end();
+  }
+
 
             if (
                 req.method === 'OPTIONS'

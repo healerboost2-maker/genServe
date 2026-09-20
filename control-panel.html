@@ -206,7 +206,13 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d12;border:1px sol
 <div class="toast" id="toast"></div>
 
 <script>
-const A=location.origin;let routes=[],connections=[],pending=[],listeners=[],editingId=null,refreshTimer=null;
+const AUDIOBRIDGE_SERVER =
+    'https://YOUR-RAILWAY-DOMAIN.up.railway.app';
+
+const A =
+    AUDIOBRIDGE_SERVER.replace(/\\/+$/, '');
+
+let routes=[],connections=[],pending=[],listeners=[],editingId=null,refreshTimer=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const token=()=>localStorage.getItem('ab_admin_token')||'';
@@ -338,7 +344,48 @@ async function saveRoute(){const b={routeId:$('rRouteId').value.trim(),stationId
 async function controlRoute(i){const r=routes[i];const state=prompt('Enter stream state: active, frozen, paused, muted, disabled',r.streamState||'active');if(state===null)return;if(!['active','frozen','paused','muted','disabled'].includes(state)){toast('Invalid stream state.','bad');return}const reason=prompt('Reason (optional):','')??'';try{await api('/api/casters/'+encodeURIComponent(r.casterId)+'/control',{method:'POST',body:JSON.stringify({state,reason})});toast('Stream control updated.','good');await refreshAll()}catch(e){toast(e.message,'bad')}}
 async function acceptPending(i){const p=pending[i];const routeId=prompt('Route ID:',p.casterId);if(routeId===null)return;const stationId=prompt('Station ID:',p.casterId);if(stationId===null)return;const station=prompt('Station name:',p.station||p.casterId);if(station===null)return;try{await api('/api/registrations/'+encodeURIComponent(p.requestId),{method:'POST',body:JSON.stringify({action:'accept',routeId,stationId,station,channel:p.channel})});toast('Registration accepted.','good');await refreshAll()}catch(e){toast(e.message,'bad')}}
 async function rejectPending(i){if(!confirm('Reject this registration?'))return;const p=pending[i];try{await api('/api/registrations/'+encodeURIComponent(p.requestId),{method:'POST',body:JSON.stringify({action:'reject'})});toast('Registration rejected.','good');await refreshAll()}catch(e){toast(e.message,'bad')}}
-function showRoute(i){const r=routes[i],scheme=location.protocol==='https:'?'wss:':'ws:',http=location.protocol==='https:'?'https:':'http:';$('detailsTitle').textContent='Route: '+r.routeId;$('details').innerHTML=`<div class="detail-grid">${[['Route ID',r.routeId],['Station ID',r.stationId],['Station',r.station],['Caster',r.casterId],['Channel',String(r.channel||'').toUpperCase()],['State',r.streamState],['Enabled',r.enabled!==false?'Yes':'No']].map(x=>`<b>${esc(x[0])}</b><span>${esc(x[1])}</span>`).join('')}</div><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>WebSocket endpoints</b><div class="card" style="margin-top:8px"><div class="endpoint">${esc(scheme+'//'+location.host+r.txPath)}</div><div class="endpoint" style="margin-top:8px">${esc(scheme+'//'+location.host+r.rxPath)}</div></div><b>HTTP</b><div class="card" style="margin-top:8px"><div class="endpoint">${esc(http+'//'+location.host+'/status')}</div><div class="endpoint" style="margin-top:8px">${esc(http+'//'+location.host+'/health')}</div></div>`;$('detailsModal').classList.add('open')}
+function showRoute(i){
+ const r=routes[i];
+ const isHttps=A.startsWith('https://');
+ const scheme=isHttps?'wss:':'ws:';
+ const http=isHttps?'https:':'http:';
+ const serverHost=A.replace(/^https?:\/\//,'');
+
+ $('detailsTitle').textContent='Route: '+r.routeId;
+
+ $('details').innerHTML=`
+<div class="detail-grid">
+${[
+ ['Route ID',r.routeId],
+ ['Station ID',r.stationId],
+ ['Station',r.station],
+ ['Caster',r.casterId],
+ ['Channel',String(r.channel||'').toUpperCase()],
+ ['State',r.streamState],
+ ['Enabled',r.enabled!==false?'Yes':'No']
+].map(x=>`<b>${esc(x[0])}</b><span>${esc(x[1])}</span>`).join('')}
+</div>
+
+<hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+
+<b>WebSocket endpoints</b>
+
+<div class="card" style="margin-top:8px">
+<div class="endpoint">${esc(scheme+'//'+serverHost+r.txPath)}</div>
+<div class="endpoint" style="margin-top:8px">${esc(scheme+'//'+serverHost+r.rxPath)}</div>
+</div>
+
+<b>HTTP</b>
+
+<div class="card" style="margin-top:8px">
+<div class="endpoint">${esc(http+'//'+serverHost+'/status')}</div>
+<div class="endpoint" style="margin-top:8px">${esc(http+'//'+serverHost+'/health')}</div>
+</div>
+`;
+
+ $('detailsModal').classList.add('open');
+}
+
 function showConnection(i){const x=connections[i];$('detailsTitle').textContent='Connection Details';$('details').innerHTML='<div class="detail-grid">'+Object.entries(x).map(([k,v])=>`<b>${esc(k)}</b><span>${esc(typeof v==='object'?JSON.stringify(v):v)}</span>`).join('')+'</div>';$('detailsModal').classList.add('open')}
 function closeModal(id){$(id).classList.remove('open')}
 function scrollToId(id){$(id)?.scrollIntoView({behavior:'smooth',block:'start'})}
