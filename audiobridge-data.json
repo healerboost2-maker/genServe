@@ -1,0 +1,417 @@
+{
+  "routes": [
+    {
+      "routeId": "station101",
+      "stationId": "st101",
+      "station": "101.1 Radyo Latigo",
+      "casterId": "cst001",
+      "channel": "fm",
+      "path": "/fmtx",
+      "enabled": true,
+      "streamState": "active",
+      "createdAt": "2026-09-19T09:39:25.642Z",
+      "txPath": "/stations/station101/tx",
+      "rxPath": "/stations/station101/rx",
+      "lastControlAt": "2026-09-19T09:58:10.421Z",
+      "lastControlReason": ""
+    },
+    {
+      "routeId": "XX1",
+      "stationId": "rd1",
+      "station": "106.7 RD",
+      "casterId": "cst02",
+      "channel": "fm",
+      "enabled": true,
+      "streamState": "active",
+      "createdAt": "2026-09-20T12:28:10.412Z",
+      "txPath": "/stations/XX1/tx",
+      "rxPath": "/stations/XX1/rx"
+    }
+  ],
+  "pending": [],
+  "audit": [
+    {
+      "time": "2026-09-20T15:30:29.352Z",
+      "action": "caster-accepted",
+      "casterId": "cst02",
+      "routeId": "XX1",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T12:32:12.141Z",
+      "action": "caster-accepted",
+      "casterId": "cst02",
+      "routeId": "XX1",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T12:28:10.415Z",
+      "action": "route-created",
+      "routeId": "XX1",
+      "stationId": "rd1",
+      "casterId": "cst02",
+      "channel": "fm",
+      "txPath": "/stations/XX1/tx",
+      "rxPath": "/stations/XX1/rx"
+    },
+    {
+      "time": "2026-09-20T05:52:00.006Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T05:51:57.928Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T05:50:28.845Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T05:50:26.834Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T05:50:25.321Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T05:50:23.298Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T05:50:15.419Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T05:45:48.429Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T05:27:45.813Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T05:27:33.813Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T05:24:36.784Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T04:51:03.212Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T04:37:25.424Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-20T04:21:31.189Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T14:04:50.008Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T14:04:31.733Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T14:00:49.379Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T13:59:55.039Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T13:17:04.482Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T13:17:00.446Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T13:06:03.865Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:57:23.415Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:44:33.156Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:40:45.621Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:40:43.604Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:36:37.508Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:36:35.477Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:28:22.857Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:28:20.836Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:28:20.463Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:28:18.454Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:28:12.222Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:28:10.204Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:28:06.216Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:28:04.163Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:28:00.613Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:27:58.599Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:27:51.119Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T12:04:07.793Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T11:58:47.599Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T11:58:45.582Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T11:58:42.793Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T11:58:40.793Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T11:58:36.681Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T11:58:32.651Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T10:40:03.142Z",
+      "action": "caster-accepted",
+      "casterId": "cst001",
+      "routeId": "station101",
+      "mode": "route-endpoint"
+    },
+    {
+      "time": "2026-09-19T09:58:10.421Z",
+      "action": "caster-control",
+      "casterId": "cst001",
+      "state": "active",
+      "connected": false
+    },
+    {
+      "time": "2026-09-19T09:58:06.360Z",
+      "action": "route-updated",
+      "routeId": "station101",
+      "previousRouteId": "station101",
+      "previousCasterId": "cst001",
+      "previousChannel": "fm",
+      "changes": {
+        "routeId": "station101",
+        "stationId": "st101",
+        "station": "101.1 Radyo Latigo",
+        "casterId": "cst001",
+        "channel": "fm",
+        "enabled": true
+      },
+      "activeConnections": 0
+    },
+    {
+      "time": "2026-09-19T09:54:16.485Z",
+      "action": "caster-control",
+      "casterId": "cst001",
+      "state": "disabled",
+      "connected": false
+    },
+    {
+      "time": "2026-09-19T09:39:25.642Z",
+      "action": "route-created",
+      "routeId": "station101",
+      "casterId": "cst001"
+    }
+  ]
+}

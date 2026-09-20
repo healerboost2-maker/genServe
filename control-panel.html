@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AudioBridge — Control Center</title>
+<style>
+:root{
+ --bg:#070a0f;--panel:#0e131a;--panel2:#121923;--line:#222c38;
+ --text:#edf3f8;--muted:#8996a5;--accent:#4d9cff;--accent2:#2876d1;
+ --good:#32d583;--bad:#ff6078;--warn:#f4bb4d;--shadow:0 18px 50px #0008;
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);
+font:13px Inter,Segoe UI,Arial,sans-serif}button,input,select{font:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:#151d27;color:var(--text);border-radius:7px;padding:8px 12px}
+button:hover{background:#1b2632;border-color:#344354}.primary{background:var(--accent2);border-color:#4d9cff!important}
+.danger{background:#4b1d28}.good{background:#123b2b}.warn{background:#493a1b}
+.hidden{display:none!important}.muted{color:var(--muted)}
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+background:radial-gradient(circle at 50% 25%,#17385f55 0,#0a0d12 42%,#070a0f 75%)}
+.login-box{width:min(430px,100%);background:#0e131a;border:1px solid #263241;border-radius:16px;
+padding:30px;box-shadow:var(--shadow)}
+.brand{display:flex;align-items:center;gap:13px;margin-bottom:25px}
+.brand-mark{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#4d9cff,#1457a5);
+display:grid;place-items:center;font-weight:800;font-size:17px;box-shadow:0 8px 25px #1468bd44}
+.brand h1{font-size:21px;margin:0}.brand div div{font-size:11px;color:var(--muted);margin-top:3px}
+.login-box h2{font-size:18px;margin:0 0 6px}.login-box .hint{color:var(--muted);margin-bottom:20px}
+.field{margin-bottom:13px}.field label{display:block;color:#aab6c4;font-size:11px;margin:0 0 6px}
+input,select{width:100%;background:#090e14;color:var(--text);border:1px solid #293442;border-radius:8px;padding:11px}
+input:focus,select:focus{outline:none;border-color:#4d9cff;box-shadow:0 0 0 3px #4d9cff18}
+.login-actions{display:flex;gap:8px}.login-actions button{flex:1;padding:10px}
+.login-msg{min-height:18px;margin-top:12px;color:var(--bad)}
+#app{display:none;min-height:100vh}.topbar{height:64px;border-bottom:1px solid var(--line);background:#0b1017ee;
+display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
+.top-left{display:flex;align-items:center;gap:12px}.mini-mark{width:34px;height:34px;border-radius:9px;background:#1764ad;
+display:grid;place-items:center;font-size:12px;font-weight:800}.top-title{font-weight:700}.top-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.top-right{display:flex;align-items:center;gap:10px}.server-pill{display:flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid var(--line);border-radius:20px;color:#b6c1cd}
+.dot{width:8px;height:8px;border-radius:50%;background:#68717d}.dot.ok{background:var(--good);box-shadow:0 0 10px #32d58388}.dot.bad{background:var(--bad)}
+.layout{display:flex;max-width:1700px;margin:auto}.sidebar{width:210px;border-right:1px solid var(--line);min-height:calc(100vh - 64px);padding:18px 12px;position:sticky;top:64px;align-self:flex-start}
+.nav-label{font-size:10px;color:#687483;text-transform:uppercase;letter-spacing:.08em;padding:8px 10px}
+.nav{display:flex;gap:9px;align-items:center;width:100%;border:0;background:transparent;text-align:left;color:#aab5c1;margin-bottom:3px}
+.nav.active,.nav:hover{background:#151e29;color:#fff;border-color:transparent}.nav.active{box-shadow:inset 2px 0 #4d9cff}
+.main{flex:1;padding:22px;min-width:0}.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin-bottom:18px}
+.page-head h1{font-size:23px;margin:0}.page-head p{margin:5px 0 0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.metric{position:relative;overflow:hidden}.metric:after{content:"";position:absolute;width:70px;height:70px;border-radius:50%;right:-25px;top:-25px;background:#4d9cff12}
+.metric h3{font-size:11px;font-weight:500;color:var(--muted);margin:0 0 9px}.metric .num{font-size:27px;font-weight:750}.metric .caption{font-size:10px;color:#6f7b88;margin-top:4px}
+section{margin-top:18px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.section-head h2{font-size:14px;margin:0}.tools{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.tools input{width:240px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:9px;background:var(--panel)}
+table{width:100%;border-collapse:collapse;min-width:850px}th,td{padding:10px 11px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{background:#121923;color:#788595;font-size:10px;text-transform:uppercase;letter-spacing:.04em;position:sticky;top:0}
+tr:last-child td{border-bottom:0}tbody tr:hover{background:#111821}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:15px;background:#202934;color:#b9c3ce;font-size:10px}
+.badge.good{background:#123a29;color:#69e7a4}.badge.bad{background:#451c26;color:#ff8a9b}.badge.warn{background:#463819;color:#ffd36a}
+.actions{display:flex;gap:5px;flex-wrap:wrap}.actions button{padding:5px 8px;font-size:11px}
+.endpoint{font-family:Consolas,monospace;font-size:10px;word-break:break-all;color:#9fb3c9}
+.empty{padding:28px!important;text-align:center;color:#697685}
+.audit-list{max-height:380px;overflow:auto}.audit-item{display:grid;grid-template-columns:155px 120px 1fr;gap:12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.audit-item:last-child{border-bottom:0}.audit-time{color:#718092;font-family:Consolas,monospace;font-size:10px}.audit-action{color:#73aef0;font-weight:650;font-size:11px}.audit-detail{color:#b4bec9;word-break:break-word}
+pre{white-space:pre-wrap;word-break:break-word;background:#090d12;border:1px solid var(--line);border-radius:7px;padding:11px;color:#b9c3cf}
+.modal{display:none;position:fixed;inset:0;background:#000b;align-items:center;justify-content:center;padding:15px;z-index:20}
+.modal.open{display:flex}.modal-box{width:min(780px,100%);max-height:90vh;overflow:auto;background:#10161e;border:1px solid #2b3745;border-radius:12px;padding:18px;box-shadow:var(--shadow)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.modal-head h2{font-size:16px;margin:0}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:11px}.form .full{grid-column:1/-1}.form label{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}
+.modal-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:15px}.detail-grid{display:grid;grid-template-columns:130px 1fr;gap:8px;font-size:12px}
+.detail-grid b{color:#788697;font-weight:500}.detail-grid span{word-break:break-word}.listener-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.listener-toolbar input{width:150px}.listener-note{font-size:11px;color:var(--muted);margin-top:8px}
+.toast{position:fixed;right:20px;bottom:20px;background:#121a23;border:1px solid #344252;padding:11px 14px;border-radius:8px;box-shadow:var(--shadow);z-index:50;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}
+.toast.show{opacity:1;transform:none}.toast.good{border-color:#237552}.toast.bad{border-color:#87313e}
+@media(max-width:950px){.sidebar{display:none}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.main{padding:14px}.topbar{padding:0 12px}.top-sub{display:none}.audit-item{grid-template-columns:1fr;gap:3px}.form{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="login-box">
+    <div class="brand">
+      <div class="brand-mark">AB</div>
+      <div><h1>AudioBridge</h1><div>Control Center · Administrator</div></div>
+    </div>
+    <h2>Administrator Login</h2>
+    <div class="hint">Sign in with the server administrator token to continue.</div>
+    <div class="field"><label>ADMIN TOKEN</label><input id="loginToken" type="password" autocomplete="current-password" placeholder="Enter administrator token"></div>
+    <div class="login-actions"><button class="primary" onclick="login()">Sign in</button></div>
+    <div id="loginMsg" class="login-msg"></div>
+  </div>
+</div>
+
+<div id="app">
+  <header class="topbar">
+    <div class="top-left"><div class="mini-mark">AB</div><div><div class="top-title">AudioBridge Control Center</div><div class="top-sub">Real-time broadcast infrastructure</div></div></div>
+    <div class="top-right">
+      <div class="server-pill"><span id="dot" class="dot bad"></span><span id="serverState">Disconnected</span></div>
+      <button onclick="refreshAll()">Refresh</button><button onclick="logout()">Sign out</button>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-label">Monitor</div>
+      <button class="nav active" onclick="scrollToId('overview')">Overview</button>
+      <button class="nav" onclick="scrollToId('routesSection')">Routes</button>
+      <button class="nav" onclick="scrollToId('pendingSection')">Registrations</button>
+      <button class="nav" onclick="scrollToId('connectionsSection')">Connections</button>
+      <button class="nav" onclick="scrollToId('listenersSection')">Listeners</button>
+      <div class="nav-label">System</div>
+      <button class="nav" onclick="scrollToId('auditSection')">Audit Log</button>
+      <button class="nav" onclick="scrollToId('serverSection')">Server</button>
+      <button class="nav" onclick="scrollToId('configSection')">Configuration</button>
+    </aside>
+    <main class="main">
+      <div class="page-head" id="overview">
+        <div><h1>Overview</h1><p>Live status and operational control for your AudioBridge server.</p></div>
+        <div class="muted" id="lastRefresh">—</div>
+      </div>
+
+      <div class="grid">
+        <div class="card metric"><h3>AM TRANSMITTERS</h3><div class="num" id="amTx">0</div><div class="caption">Connected sources</div></div>
+        <div class="card metric"><h3>AM RECEIVERS</h3><div class="num" id="amRx">0</div><div class="caption">Connected listeners</div></div>
+        <div class="card metric"><h3>FM TRANSMITTERS</h3><div class="num" id="fmTx">0</div><div class="caption">Connected sources</div></div>
+        <div class="card metric"><h3>FM RECEIVERS</h3><div class="num" id="fmRx">0</div><div class="caption">Connected listeners</div></div>
+      </div>
+
+      <section id="routesSection">
+        <div class="section-head"><div><h2>Routes</h2><div class="muted">Configured broadcast routes and stream controls</div></div><div class="tools"><input id="routeSearch" placeholder="Search routes…" oninput="renderRoutes()"><button class="primary" onclick="openRoute()">+ Add Route</button></div></div>
+        <div class="table-wrap"><table><thead><tr><th>Route</th><th>Station</th><th>Channel</th><th>Caster</th><th>State</th><th>Enabled</th><th>Endpoints</th><th>Actions</th></tr></thead><tbody id="routes"></tbody></table></div>
+      </section>
+
+      <section id="pendingSection">
+        <div class="section-head"><div><h2>Pending Registrations</h2><div class="muted">New transmitter registration requests</div></div><button onclick="loadRegistrations()">Refresh</button></div>
+        <div class="table-wrap"><table><thead><tr><th>Request</th><th>Caster</th><th>Station</th><th>Channel</th><th>Format</th><th>Requested</th><th>Actions</th></tr></thead><tbody id="pending"></tbody></table></div>
+      </section>
+
+      <section id="connectionsSection">
+        <div class="section-head"><div><h2>Live Connections</h2><div class="muted">Current transmitters and receivers</div></div><button onclick="loadConnections()">Refresh</button></div>
+        <div class="table-wrap"><table><thead><tr><th>Role</th><th>Channel</th><th>Route</th><th>Caster</th><th>Station</th><th>State</th><th>Format</th><th>Audio</th><th>Connected</th><th>Actions</th></tr></thead><tbody id="connections"></tbody></table></div>
+      </section>
+
+      <section id="listenersSection">
+        <div class="section-head">
+          <div>
+            <h2>Listener Analytics</h2>
+            <div class="muted">Monthly listener sessions and station-level listening totals</div>
+          </div>
+          <div class="listener-toolbar">
+            <input id="listenerMonth" type="month">
+            <button onclick="loadListeners()">Refresh</button>
+            <button class="primary" onclick="exportListeners()">Export Excel</button>
+          </div>
+        </div>
+        <div class="grid" style="margin-bottom:11px">
+          <div class="card metric"><h3>CURRENT AM LISTENERS</h3><div class="num" id="currentAmListeners">0</div><div class="caption">Live receiver connections</div></div>
+          <div class="card metric"><h3>CURRENT FM LISTENERS</h3><div class="num" id="currentFmListeners">0</div><div class="caption">Live receiver connections</div></div>
+          <div class="card metric"><h3>MONTHLY SESSIONS</h3><div class="num" id="monthlySessions">0</div><div class="caption">Listener sessions</div></div>
+          <div class="card metric"><h3>LISTENER HOURS</h3><div class="num" id="monthlyHours">0</div><div class="caption">Accumulated listening time</div></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Station</th><th>Channel</th><th>Route</th><th>Sessions</th><th>Unique Listeners</th><th>Minutes</th><th>Hours</th><th>Current</th></tr>
+            </thead>
+            <tbody id="listeners"></tbody>
+          </table>
+        </div>
+        <div class="listener-note">Unique listeners are counted when the receiver supplies a stable listenerId. Without one, the server reports listener sessions.</div>
+      </section>
+
+      <section id="auditSection">
+        <div class="section-head"><div><h2>Audit Log</h2><div class="muted">Administrative activity recorded by the server</div></div><button onclick="loadLogs()">Refresh</button></div>
+        <div class="card audit-list" id="logs"><div class="empty">No audit entries.</div></div>
+      </section>
+
+      <section id="serverSection">
+        <div class="section-head"><div><h2>Server</h2><div class="muted">Health and public server status</div></div></div>
+        <div class="card" id="serverInfo"><div class="muted">Loading…</div></div>
+      </section>
+
+      <section id="configSection">
+        <div class="section-head">
+          <div><h2>Configuration</h2><div class="muted">Runtime settings loaded directly from the AudioBridge server</div></div>
+          <button onclick="loadConfig()">Refresh</button>
+        </div>
+        <div class="card" id="configInfo"><div class="muted">Loading…</div></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="modal" id="routeModal"><div class="modal-box">
+  <div class="modal-head"><h2 id="routeTitle">Add Route</h2><button onclick="closeModal('routeModal')">×</button></div>
+  <div class="form">
+    <div><label>ROUTE ID</label><input id="rRouteId"></div><div><label>STATION ID</label><input id="rStationId"></div>
+    <div><label>STATION NAME</label><input id="rStation"></div><div><label>CASTER ID</label><input id="rCasterId"></div>
+    <div><label>CHANNEL</label><select id="rChannel"><option value="am">AM</option><option value="fm">FM</option></select></div>
+    <div><label>STREAM STATE</label><select id="rState"><option>active</option><option>frozen</option><option>paused</option><option>muted</option><option>disabled</option></select></div>
+    <div><label>ENABLED</label><select id="rEnabled"><option value="true">Yes</option><option value="false">No</option></select></div>
+  </div>
+  <div class="modal-actions"><button onclick="closeModal('routeModal')">Cancel</button><button class="primary" onclick="saveRoute()">Save Route</button></div>
+</div></div>
+
+<div class="modal" id="detailsModal"><div class="modal-box">
+  <div class="modal-head"><h2 id="detailsTitle">Details</h2><button onclick="closeModal('detailsModal')">×</button></div>
+  <div id="details"></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const A=location.origin;let routes=[],connections=[],pending=[],listeners=[],editingId=null,refreshTimer=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const token=()=>localStorage.getItem('ab_admin_token')||'';
+function toast(s,type=''){const t=$('toast');t.textContent=s;t.className='toast show '+type;clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.className='toast',2500)}
+function setConnected(ok){$('dot').className='dot '+(ok?'ok':'bad');$('serverState').textContent=ok?'Connected':'Disconnected'}
+function saveToken(t){if(!t)return false;localStorage.setItem('ab_admin_token',t);return true}
+function login(){
+ const t=$('loginToken').value.trim();if(!t){$('loginMsg').textContent='Enter the administrator token.';return}
+ saveToken(t);$('loginMsg').textContent='Authenticating…';showApp();refreshAll().catch(()=>{});
+}
+function showApp(){$('login').classList.add('hidden');$('app').style.display='block'}
+function logout(){localStorage.removeItem('ab_admin_token');clearInterval(refreshTimer);$('app').style.display='none';$('login').classList.remove('hidden');$('loginToken').value='';setConnected(false)}
+async function api(path,opts={}){
+ const t=token();if(!t)throw Error('ADMIN_TOKEN_REQUIRED');
+ opts.headers={...(opts.headers||{}),Authorization:'Bearer '+t,'Content-Type':'application/json'};
+ const r=await fetch(A+path,opts);let j={};try{j=await r.json()}catch{}if(!r.ok)throw Error(j.error||('HTTP '+r.status));return j;
+}
+async function publicApi(path){const r=await fetch(A+path);let j={};try{j=await r.json()}catch{}if(!r.ok)throw Error(j.error||('HTTP '+r.status));return j}
+async function refreshAll(){
+ try{
+  const s=await publicApi('/status');renderStatus(s);
+  await Promise.all([loadRoutes(),loadRegistrations(),loadConnections(),loadListeners(),loadLogs(),loadConfig()]);
+  const h=await publicApi('/health');renderServer(h,s);setConnected(true);$('lastRefresh').textContent='Updated '+new Date().toLocaleTimeString();
+ }catch(e){setConnected(false);toast(e.message||String(e),'bad');if(String(e.message).includes('401'))logout()}
+}
+function renderStatus(s){$('amTx').textContent=s.am?.transmitters??0;$('amRx').textContent=s.am?.receivers??0;$('fmTx').textContent=s.fm?.transmitters??0;$('fmRx').textContent=s.fm?.receivers??0}
+async function loadRoutes(){const j=await api('/api/routes');routes=j.routes||[];renderRoutes()}
+async function loadRegistrations(){const j=await api('/api/registrations');pending=j.pending||[];renderPending()}
+async function loadConnections(){const j=await api('/api/connections');connections=j.connections||[];renderConnections()}
+function currentMonth(){
+ const d=new Date();
+ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+async function loadListeners(){
+ try{
+  const month=$('listenerMonth').value||currentMonth();
+  const j=await api('/api/listeners?month='+encodeURIComponent(month));
+  listeners=j.stations||[];
+  const current=j.currentListeners||[];
+  $('currentAmListeners').textContent=current.filter(x=>x.channel==='AM').reduce((n,x)=>n+(x.listeners||0),0);
+  $('currentFmListeners').textContent=current.filter(x=>x.channel==='FM').reduce((n,x)=>n+(x.listeners||0),0);
+  $('monthlySessions').textContent=j.totals?.sessions??0;
+  $('monthlyHours').textContent=j.totals?.listenerHours??0;
+  const currentMap={};
+  current.forEach(x=>currentMap[x.routeId||('legacy-'+String(x.channel||'').toLowerCase())]=x.listeners||0);
+  $('listeners').innerHTML=listeners.length?listeners.map(x=>`<tr>
+    <td><b>${esc(x.station)}</b></td>
+    <td>${esc(x.channel)}</td>
+    <td>${esc(x.routeId||'—')}</td>
+    <td>${esc(x.sessions)}</td>
+    <td>${esc(x.uniqueListeners)}</td>
+    <td>${esc(x.listenerMinutes)}</td>
+    <td>${esc(x.listenerHours)}</td>
+    <td>${esc(currentMap[x.routeId]||0)}</td>
+  </tr>`).join(''):`<tr><td colspan="8" class="empty">No listener data for ${esc(month)}.</td></tr>`;
+ }catch(e){
+  $('listeners').innerHTML='<tr><td colspan="8" class="empty">Listener analytics unavailable.</td></tr>';
+  toast(e.message||'Unable to load listener analytics.','bad');
+ }
+}
+async function exportListeners(){
+ try{
+  const month=$('listenerMonth').value||currentMonth();
+  const r=await fetch(A+'/api/listeners/export?month='+encodeURIComponent(month),{
+   headers:{Authorization:'Bearer '+token()}
+  });
+  if(!r.ok){
+   let j={};try{j=await r.json()}catch{}
+   throw Error(j.error||('HTTP '+r.status));
+  }
+  const blob=await r.blob();
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`audiobridge-listeners-${month}.xlsx`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast('Excel report exported.','good');
+ }catch(e){
+  toast(e.message||'Excel export failed.','bad');
+ }
+}
+async function loadLogs(){
+ const j=await api('/api/logs'),a=j.logs||[];$('logs').innerHTML=a.length?a.map(x=>{
+  const detail=Object.entries(x).filter(([k])=>!['time','action'].includes(k)).map(([k,v])=>`${esc(k)}: ${esc(typeof v==='object'?JSON.stringify(v):v)}`).join(' · ');
+  return `<div class="audit-item"><div class="audit-time">${esc(x.time||'')}</div><div class="audit-action">${esc(x.action||'Activity')}</div><div class="audit-detail">${detail||'—'}</div></div>`;
+ }).join(''):'<div class="empty">No audit entries.</div>'
+}
+async function loadConfig(){
+ try{
+  const c=await api('/api/config');
+  renderConfig(c);
+ }catch(e){
+  $('configInfo').innerHTML='<div class="muted">Configuration unavailable.</div>';
+ }
+}
+function renderConfig(c){
+ const rows=[
+  ['Server',c?.server||'—'],
+  ['Version',c?.version||'—'],
+  ['Port',c?.port??'—'],
+  ['Data file',c?.dataFile||'—'],
+  ['Environment',c?.environment||'—'],
+  ['WebSocket',c?.websocket?'Enabled':'Disabled'],
+  ['Admin token','Protected / hidden']
+ ];
+ $('configInfo').innerHTML='<div class="detail-grid">'+rows.map(x=>`<b>${esc(x[0])}</b><span>${esc(x[1])}</span>`).join('')+'</div>';
+}
+function renderServer(h,s){
+ const data=[['Health',h?.ok===false?'Not healthy':'Healthy'],['Server',s?.server||'AudioBridge'],['Version',s?.version||'—'],['Routes',s?.routes??'—'],['Pending registrations',s?.pending??'—'],['Updated',new Date().toLocaleString()]];
+ $('serverInfo').innerHTML='<div class="detail-grid">'+data.map(x=>`<b>${esc(x[0])}</b><span>${esc(x[1])}</span>`).join('')+'</div>'
+}
+function stateBadge(s){const c=s==='active'?'good':(['disabled','muted'].includes(s)?'bad':'warn');return `<span class="badge ${c}">${esc(s||'active')}</span>`}
+function renderRoutes(){
+ const q=($('routeSearch').value||'').toLowerCase();const list=routes.filter(r=>JSON.stringify(r).toLowerCase().includes(q));
+ $('routes').innerHTML=list.length?list.map(r=>{const i=routes.indexOf(r);return `<tr>
+ <td><b>${esc(r.routeId)}</b></td><td>${esc(r.station)}</td><td>${esc(String(r.channel||'').toUpperCase())}</td><td>${esc(r.casterId)}</td>
+ <td>${stateBadge(r.streamState)}</td><td>${r.enabled!==false?'Yes':'No'}</td><td class="endpoint">${esc(r.txPath||'')}<br>${esc(r.rxPath||'')}</td>
+ <td><div class="actions"><button onclick="showRoute(${i})">Details</button><button onclick="editRoute(${i})">Edit</button><button class="warn" onclick="controlRoute(${i})">Control</button></div></td>
+ </tr>`}).join(''):`<tr><td colspan="8" class="empty">No routes found.</td></tr>`
+}
+function renderPending(){$('pending').innerHTML=pending.length?pending.map((p,i)=>`<tr><td>${esc(p.requestId)}</td><td>${esc(p.casterId)}</td><td>${esc(p.station)}</td><td>${esc(p.channel?.toUpperCase())}</td><td>${esc(p.format||'')}</td><td>${esc(p.requestedAt||'')}</td><td><div class="actions"><button class="good" onclick="acceptPending(${i})">Accept</button><button class="danger" onclick="rejectPending(${i})">Reject</button></div></td></tr>`).join(''):`<tr><td colspan="7" class="empty">No pending registrations.</td></tr>`}
+function renderConnections(){$('connections').innerHTML=connections.length?connections.map((x,i)=>`<tr><td>${esc(x.role)}</td><td>${esc(String(x.channel||'').toUpperCase())}</td><td>${esc(x.routeId)}</td><td>${esc(x.casterId)}</td><td>${esc(x.station)}</td><td>${stateBadge(x.state)}</td><td>${esc(x.format||'')}</td><td>${x.role==='transmitter'?esc(String(x.audioPackets??0))+' pkts / '+esc(String(x.audioBytes??0))+' bytes':'—'}</td><td>${esc(x.connectedAt||'')}</td><td><button onclick="showConnection(${i})">Details</button></td></tr>`).join(''):`<tr><td colspan="10" class="empty">No active connections.</td></tr>`}
+function openRoute(){editingId=null;$('routeTitle').textContent='Add Route';['rRouteId','rStationId','rStation','rCasterId'].forEach(x=>$(x).value='');$('rChannel').value='am';$('rState').value='active';$('rEnabled').value='true';$('routeModal').classList.add('open')}
+function editRoute(i){const r=routes[i];editingId=r.routeId;$('routeTitle').textContent='Edit Route';$('rRouteId').value=r.routeId||'';$('rStationId').value=r.stationId||'';$('rStation').value=r.station||'';$('rCasterId').value=r.casterId||'';$('rChannel').value=r.channel||'am';$('rState').value=r.streamState||'active';$('rEnabled').value=r.enabled===false?'false':'true';$('routeModal').classList.add('open')}
+async function saveRoute(){const b={routeId:$('rRouteId').value.trim(),stationId:$('rStationId').value.trim(),station:$('rStation').value.trim(),casterId:$('rCasterId').value.trim(),channel:$('rChannel').value,streamState:$('rState').value,enabled:$('rEnabled').value==='true'};try{if(editingId)await api('/api/routes/'+encodeURIComponent(editingId),{method:'PATCH',body:JSON.stringify(b)});else await api('/api/routes',{method:'POST',body:JSON.stringify(b)});closeModal('routeModal');toast(editingId?'Route updated.':'Route created.','good');await refreshAll()}catch(e){toast(e.message,'bad')}}
+async function controlRoute(i){const r=routes[i];const state=prompt('Enter stream state: active, frozen, paused, muted, disabled',r.streamState||'active');if(state===null)return;if(!['active','frozen','paused','muted','disabled'].includes(state)){toast('Invalid stream state.','bad');return}const reason=prompt('Reason (optional):','')??'';try{await api('/api/casters/'+encodeURIComponent(r.casterId)+'/control',{method:'POST',body:JSON.stringify({state,reason})});toast('Stream control updated.','good');await refreshAll()}catch(e){toast(e.message,'bad')}}
+async function acceptPending(i){const p=pending[i];const routeId=prompt('Route ID:',p.casterId);if(routeId===null)return;const stationId=prompt('Station ID:',p.casterId);if(stationId===null)return;const station=prompt('Station name:',p.station||p.casterId);if(station===null)return;try{await api('/api/registrations/'+encodeURIComponent(p.requestId),{method:'POST',body:JSON.stringify({action:'accept',routeId,stationId,station,channel:p.channel})});toast('Registration accepted.','good');await refreshAll()}catch(e){toast(e.message,'bad')}}
+async function rejectPending(i){if(!confirm('Reject this registration?'))return;const p=pending[i];try{await api('/api/registrations/'+encodeURIComponent(p.requestId),{method:'POST',body:JSON.stringify({action:'reject'})});toast('Registration rejected.','good');await refreshAll()}catch(e){toast(e.message,'bad')}}
+function showRoute(i){const r=routes[i],scheme=location.protocol==='https:'?'wss:':'ws:',http=location.protocol==='https:'?'https:':'http:';$('detailsTitle').textContent='Route: '+r.routeId;$('details').innerHTML=`<div class="detail-grid">${[['Route ID',r.routeId],['Station ID',r.stationId],['Station',r.station],['Caster',r.casterId],['Channel',String(r.channel||'').toUpperCase()],['State',r.streamState],['Enabled',r.enabled!==false?'Yes':'No']].map(x=>`<b>${esc(x[0])}</b><span>${esc(x[1])}</span>`).join('')}</div><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>WebSocket endpoints</b><div class="card" style="margin-top:8px"><div class="endpoint">${esc(scheme+'//'+location.host+r.txPath)}</div><div class="endpoint" style="margin-top:8px">${esc(scheme+'//'+location.host+r.rxPath)}</div></div><b>HTTP</b><div class="card" style="margin-top:8px"><div class="endpoint">${esc(http+'//'+location.host+'/status')}</div><div class="endpoint" style="margin-top:8px">${esc(http+'//'+location.host+'/health')}</div></div>`;$('detailsModal').classList.add('open')}
+function showConnection(i){const x=connections[i];$('detailsTitle').textContent='Connection Details';$('details').innerHTML='<div class="detail-grid">'+Object.entries(x).map(([k,v])=>`<b>${esc(k)}</b><span>${esc(typeof v==='object'?JSON.stringify(v):v)}</span>`).join('')+'</div>';$('detailsModal').classList.add('open')}
+function closeModal(id){$(id).classList.remove('open')}
+function scrollToId(id){$(id)?.scrollIntoView({behavior:'smooth',block:'start'})}
+$('loginToken').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+$('listenerMonth').value=currentMonth();
+refreshTimer=setInterval(()=>{if($('app').style.display==='block'&&token())refreshAll().catch(()=>{})},5000)
+</script>
+</body>
+</html>
