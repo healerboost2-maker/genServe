@@ -45,4 +45,8 @@ coverage/
 .cache/
 
 # Crash dumps
+<<<<<<< HEAD
 *.stackdump
+=======
+*.stackdump
+>>>>>>> d203107 ( kassss)

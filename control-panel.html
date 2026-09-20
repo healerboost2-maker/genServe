@@ -206,11 +206,9 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d12;border:1px sol
 <div class="toast" id="toast"></div>
 
 <script>
-const AUDIOBRIDGE_SERVER =
-    'https://YOUR-RAILWAY-DOMAIN.up.railway.app';
-
-const A =
-    AUDIOBRIDGE_SERVER.replace(/\\/+$/, '');
+// Served by the same AudioBridge Server.js instance.
+const AUDIOBRIDGE_SERVER = window.location.origin;
+const A = AUDIOBRIDGE_SERVER.replace(/\/+$/, '');
 
 let routes=[],connections=[],pending=[],listeners=[],editingId=null,refreshTimer=null;
 const $=id=>document.getElementById(id);
@@ -219,16 +217,43 @@ const token=()=>localStorage.getItem('ab_admin_token')||'';
 function toast(s,type=''){const t=$('toast');t.textContent=s;t.className='toast show '+type;clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.className='toast',2500)}
 function setConnected(ok){$('dot').className='dot '+(ok?'ok':'bad');$('serverState').textContent=ok?'Connected':'Disconnected'}
 function saveToken(t){if(!t)return false;localStorage.setItem('ab_admin_token',t);return true}
-function login(){
- const t=$('loginToken').value.trim();if(!t){$('loginMsg').textContent='Enter the administrator token.';return}
- saveToken(t);$('loginMsg').textContent='Authenticating…';showApp();refreshAll().catch(()=>{});
+async function login(){
+ const t=$('loginToken').value.trim();
+ if(!t){
+   $('loginMsg').textContent='Enter the administrator token.';
+   return;
+ }
+ saveToken(t);
+ $('loginMsg').textContent='Authenticating…';
+ try{
+   await api('/api/routes');
+   showApp();
+   $('loginMsg').textContent='';
+   await refreshAll();
+ }catch(e){
+   localStorage.removeItem('ab_admin_token');
+   $('loginMsg').textContent='Sign in failed: '+(e.message||'Invalid administrator token.');
+   $('app').style.display='none';
+   $('login').classList.remove('hidden');
+   setConnected(false);
+ }
 }
 function showApp(){$('login').classList.add('hidden');$('app').style.display='block'}
 function logout(){localStorage.removeItem('ab_admin_token');clearInterval(refreshTimer);$('app').style.display='none';$('login').classList.remove('hidden');$('loginToken').value='';setConnected(false)}
 async function api(path,opts={}){
- const t=token();if(!t)throw Error('ADMIN_TOKEN_REQUIRED');
+ const t=token();
+ if(!t)throw Error('ADMIN_TOKEN_REQUIRED');
  opts.headers={...(opts.headers||{}),Authorization:'Bearer '+t,'Content-Type':'application/json'};
- const r=await fetch(A+path,opts);let j={};try{j=await r.json()}catch{}if(!r.ok)throw Error(j.error||('HTTP '+r.status));return j;
+ let r;
+ try{
+   r=await fetch(A+path,opts);
+ }catch(e){
+   throw Error('Cannot reach AudioBridge server: '+(e.message||e));
+ }
+ let j={};
+ try{j=await r.json()}catch{}
+ if(!r.ok)throw Error(j.error||('HTTP '+r.status));
+ return j;
 }
 async function publicApi(path){const r=await fetch(A+path);let j={};try{j=await r.json()}catch{}if(!r.ok)throw Error(j.error||('HTTP '+r.status));return j}
 async function refreshAll(){

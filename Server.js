@@ -17,7 +17,7 @@ const HEARTBEAT_INTERVAL_MS = 30000;
 const MAX_RECEIVER_BUFFERED_BYTES = 2 * 1024 * 1024;
 
 const ADMIN_TOKEN =
-    process.env.ADMIN_TOKEN || 'CHANGE_ME_ADMIN_TOKEN';
+    '1214';
 
 const DATA_FILE =
     process.env.DATA_FILE ||
@@ -856,17 +856,33 @@ function applyRouteState(
 // HTTP SERVER
 // ============================================================
 
-const server =
 function setCorsHeaders(res) {
-  res.setHeader('Access-Control-Allow-Origin', CONTROL_PANEL_ORIGIN);
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Admin-Token');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
-  res.setHeader('Access-Control-Max-Age', '86400');
+    res.setHeader(
+        'Access-Control-Allow-Origin',
+        CONTROL_PANEL_ORIGIN
+    );
+
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Content-Type, Authorization, X-Admin-Token'
+    );
+
+    res.setHeader(
+        'Access-Control-Allow-Methods',
+        'GET, POST, PATCH, OPTIONS'
+    );
+
+    res.setHeader(
+        'Access-Control-Max-Age',
+        '86400'
+    );
 }
 
+const server =
     http.createServer(
         async (req, res) => {
-  setCorsHeaders(res);
+
+            setCorsHeaders(res);
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
@@ -2439,7 +2455,13 @@ function setCorsHeaders(res) {
                     200,
                     {
                         'Content-Type':
-                            'text/html; charset=utf-8'
+                            'text/html; charset=utf-8',
+                        'Cache-Control':
+                            'no-store, no-cache, must-revalidate, proxy-revalidate',
+                        'Pragma':
+                            'no-cache',
+                        'Expires':
+                            '0'
                     }
                 );
 
